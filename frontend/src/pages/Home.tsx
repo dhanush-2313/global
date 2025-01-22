@@ -9,7 +9,7 @@ export default function Home() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await axios.get("https://dhanushbackend.onrender.com/check-session", {
+        const response = await axios.get("http://localhost:3000/check-session", {
           withCredentials: true,
         });
         if (!response.data.session) {
@@ -25,7 +25,7 @@ export default function Home() {
 
   const handleLogout = async () => {
     try {
-      await axios.post("https://dhanushbackend.onrender.com/logout", {}, { withCredentials: true });
+      await axios.post("http://localhost:3000/logout", {}, { withCredentials: true });
       navigate("/login");
     } catch (error) {
       console.error("Error during logout", error);
