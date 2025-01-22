@@ -22,22 +22,12 @@ app.use(session({
         mongoUrl: dbUrl,
     }),
     cookie: {
-        secure: false, // Set to false initially
+        secure: true, // Set to false initially
         httpOnly: true,
         maxAge: 1000 * 60 * 60, // 1 hour
         sameSite: false, // Allow cookies to be sent in all contexts
     },
 }));
-
-app.use((req, res, next) => {
-    if (req.secure) {
-        req.session.cookie.secure = true; // Set secure to true if the request is over HTTPS
-    }
-    console.log(`Session cookie secure flag: ${req.session.cookie.secure}`);
-    next();
-});
-
-// Middleware to dynamically set the secure flag based on the request protocol
 
 app.use(express.json());
 mongoose.connect(dbUrl)
