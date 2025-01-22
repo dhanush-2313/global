@@ -11,7 +11,7 @@ const Login = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/check-session", {
+        const response = await axios.get("https://dhanushbackend.onrender.com/check-session", {
           withCredentials: true,
         });
         if (response.data.session) {
@@ -28,7 +28,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3000/login",
+        "https://dhanushbackend.onrender.com/login",
         { username, password },
         { withCredentials: true }
       );
