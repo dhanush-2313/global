@@ -1,25 +1,32 @@
 import dotenv from "dotenv";
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+    dotenv.config();
+}
 import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import { user } from "./models/sampleSchema";
 import bcrypt from "bcryptjs";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 const dbUrl = process.env.MONGO_URL as string;
 
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:5173", 
+    origin: true, 
     credentials: true,
 }));
+
 app.use(session({
     secret: `${process.env.SESSION_SECRET}`,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: dbUrl,
+    }),
     cookie: {
-        secure: false, 
+        secure: process.env.NODE_ENV === 'production', 
         httpOnly: true,
         maxAge: 1000 * 60 * 60, 
     },
