@@ -1,42 +1,31 @@
 import dotenv from "dotenv";
-if (process.env.NODE_ENV !== 'production') {
-    dotenv.config();
-}
+dotenv.config();
 import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import { user } from "./models/sampleSchema";
 import bcrypt from "bcryptjs";
 import session from "express-session";
-import MongoStore from "connect-mongo";
 const dbUrl = process.env.MONGO_URL as string;
-
 const app = express();
-
 app.use(cors({
-    origin: true, 
+    origin: "http://localhost:5173",
     credentials: true,
 }));
-
 app.use(session({
     secret: `${process.env.SESSION_SECRET}`,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: dbUrl,
-    }),
     cookie: {
-        secure: process.env.NODE_ENV === 'production', 
+        secure: false,
         httpOnly: true,
-        maxAge: 1000 * 60 * 60, 
+        maxAge: 1000 * 60 * 60,
     },
 }));
 app.use(express.json());
-
 mongoose.connect(dbUrl)
     .then(() => { console.log("DB connected"); })
     .catch((err: any) => { console.log("Some error", err); });
-
 app.post("/signup", async (req: Request, res: Response) => {
     try {
         const { username, password } = req.body;
@@ -61,7 +50,6 @@ app.post("/signup", async (req: Request, res: Response) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
 app.post("/login", async (req: Request, res: Response) => {
     try {
         const { username, password } = req.body;
@@ -81,7 +69,6 @@ app.post("/login", async (req: Request, res: Response) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
 app.get("/check-session", (req: Request, res: Response) => {
     if (req.session.user) {
         res.status(200).json({ session: true, user: req.session.user });
@@ -89,7 +76,6 @@ app.get("/check-session", (req: Request, res: Response) => {
         res.status(401).json({ session: false });
     }
 });
-
 app.post("/logout", (req: Request, res: Response) => {
     req.session.destroy((err) => {
         if (err) {
@@ -99,7 +85,6 @@ app.post("/logout", (req: Request, res: Response) => {
         res.status(200).json({ message: "Logged out successfully" });
     });
 });
-
 app.listen(3000, () => {
     console.log("Server running on port 3000");
 });
